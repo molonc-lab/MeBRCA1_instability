@@ -1,0 +1,35 @@
+#PBS -r n
+#PBS -l mem=12GB,walltime=5:00:00,ncpus=1
+#PBS -m ae
+#PBS -M lijun.xu@qimrberghofer.edu.au
+#PBS -v sampleID
+#PBS -v rep_num
+#PBS -v wk_dir
+
+
+cd ${wk_dir}
+mkdir -p ${wk_dir}/output/macs3/${sample}
+module load MACS3/3.0.3
+#module load conda-envs/deeptools-3.5.6
+
+# broad peaks: H3K27me3 H3K9me3
+macs3 callpeak -t ${wk_dir}/data/aligned/${sampleID}_H3K27me3_${rep_num}_filter_markdup.bam \
+-c ${wk_dir}/data/aligned/${sampleID}_Igg_${rep_num}_filter_markdup.bam \
+--broad --bdg --outdir ${wk_dir}/output/macs3/${sampleID} \
+-n ${sampleID}_H3K27me3_${rep_num} -f BAMPE
+
+macs3 callpeak -t ${wk_dir}/data/aligned/${sampleID}_H3K9me3_${rep_num}_filter_markdup.bam \
+-c ${wk_dir}/data/aligned/${sampleID}_Igg_${rep_num}_filter_markdup.bam \
+--broad --bdg --outdir ${wk_dir}/output/macs3/${sampleID} \
+-n ${sampleID}_H3K9me3_${rep_num} -f BAMPE
+
+macs3 callpeak -t ${wk_dir}/data/aligned/${sampleID}_H3K4me1_${rep_num}_filter_markdup.bam \
+-c ${wk_dir}/data/aligned/${sampleID}_Igg_${rep_num}_filter_markdup.bam \
+--bdg --outdir ${wk_dir}/output/macs3/${sampleID} -n ${sampleID}_H3K4me1_${rep_num} -f BAMPE
+
+macs3 callpeak -t ${wk_dir}/data/aligned/${sampleID}_H3K4me3_${rep_num}_filter_markdup.bam \
+-c ${wk_dir}/data/aligned/${sampleID}_Igg_${rep_num}_filter_markdup.bam \
+--bdg --outdir ${wk_dir}/output/macs3/${sampleID} -n ${sampleID}_H3K4me3_${rep_num} -f BAMPE
+
+
+#/mnt/backedup/home/lijunX/.conda/envs/deeptools_env/bin/bamCoverage --scaleFactor 2.5 -b OVCAR8_1_H3K9me3_filter_markdup.bam -o OVCAR8_1_H3K9me3_coverage.bw

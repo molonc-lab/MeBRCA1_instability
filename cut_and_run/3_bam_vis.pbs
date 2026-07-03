@@ -1,0 +1,16 @@
+#PBS -r n
+#PBS -l mem=12GB,walltime=5:00:00,ncpus=8
+#PBS -m ae
+#PBS -M lijun.xu@qimrberghofer.edu.au
+#PBS -v bam
+#PBS -v wk_dir
+
+module load conda-envs/deeptools-3.5.6
+module load samtools
+
+samtools index ${bam}
+cd ${wk_dir}/data/aligned
+bamCoverage --normalizeUsing RPKM --numberOfProcessors 8 --effectiveGenomeSize 2913022398 \
+--ignoreDuplicates --verbose \
+--blackListFileName ${wk_dir}/ref/hg38-blacklist.v2.bed \
+-b ${bam} -o ${wk_dir}/data/scaled_coverage/$(basename ${bam} _filter_markdup.bam)_rpkm.bw

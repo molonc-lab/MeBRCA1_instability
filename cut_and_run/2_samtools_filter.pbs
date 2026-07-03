@@ -1,0 +1,23 @@
+#PBS -r n
+#PBS -l mem=24GB,walltime=5:00:00,ncpus=1
+#PBS -m ae
+#PBS -M lijun.xu@qimrberghofer.edu.au
+#PBS -v bam
+
+
+cd /working/lab_olgak/lijunX/20241202_CUT_RUN
+
+module load samtools/1.20
+module load picard/2.27.4
+
+file_name=$(basename $(basename $bam) .bam)
+
+samtools view -h -b -q 30 -f 0x02 -o data/aligned/${file_name}_filter.bam $bam 
+
+samtools sort -o data/aligned/${file_name}_filter_sorted.bam data/aligned/${file_name}_filter.bam 
+samtools index data/aligned/${file_name}_filter_sorted.bam
+
+java -jar /software/picard/picard-tools-2.27.4/picard.jar MarkDuplicates \
+I=data/aligned/${file_name}_filter_sorted.bam \
+O=data/aligned/${file_name}_filter_markdup.bam \
+M=data/aligned/${file_name}_marked_dup_metrics.txt

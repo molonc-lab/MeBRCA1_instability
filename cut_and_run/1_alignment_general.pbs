@@ -1,0 +1,21 @@
+#PBS -r n
+#PBS -l mem=12GB,walltime=5:00:00,ncpus=4
+#PBS -m ae
+#PBS -M lijun.xu@qimrberghofer.edu.au
+#PBS -v sampleID
+#PBS -v wk_dir
+#PBS -v marker
+#PBS -v rep_num
+
+cd /working/lab_olgak/lijunX/20241202_CUT_RUN
+
+read1=${wk_dir}/data/${sampleID}/${rep_num}/*${marker}*R1*.fastq.gz
+read2=${wk_dir}/data/${sampleID}/${rep_num}/*${marker}*R2*.fastq.gz
+
+module load bowtie2/2.2.9
+module load samtools/1.20
+bowtie2 -p 4 -x ${wk_dir}/reference/GCA_000001405.15_GRCh38_no_alt_analysis_set \
+--end-to-end --very-sensitive \
+-1 $read1 \
+-2 $read2|\
+samtools view -bS - > ${wk_dir}/data/aligned/${sampleID}_${marker}_${rep_num}.bam
