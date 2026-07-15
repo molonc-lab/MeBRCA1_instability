@@ -1028,7 +1028,7 @@ ggarrange(BRCA1_annotation_gg,MYO1D_annotation_gg, widths = c(abs(min(BRCA1_anno
 
 ggsave("plots/sv_585.pdf", width = 10, height =2)
 
-bam_file <- "/working/lab_olgak/lijunX/20260330_ONT_Multiplex_DNA/output_2026/HCC38_585/SFRC01585S1_2163_T3_multiplex_mapped_sc.bam"
+bam_file <- "/working/lab_olgak/lijunX/20260330_ONT_Multiplex_DNA/output/HCC38_585/SFRC01585S1_2163_T3_multiplex_mapped_sc.bam"
 
 
 bp1 <- list(chrom = "chr17", pos = 43139935,  window = 5000)
@@ -1733,33 +1733,27 @@ write.csv(x =  plot_BND_density%>%
 
 ```{r}
 
-crispr_guide1 <- fread("../20260330_ONT_Multiplex_DNA/Me_all/OVCAR8_A630_CRISPR1_IC80_5mc_brca1.tsv") %>%
-  filter(mod_code == "m",
-         ref_position >=43125192-3000, ref_position <=43125532+3000)
-
-A630_parental <- fread("../OV_meBRCA1_Nanopore/Me_all/OVCAR8_LP_A6_30_extract_5mc_brca1.tsv")%>%
+crispr_guide1 <- fread("../20260330_ONT_Multiplex_DNA/Me_all/OVCAR8_A630_CRISPR1_IC80_pileup_5mc_brca1.tsv") %>%
   filter(mod_code == "m",
          ref_position >=43125192-3000, ref_position <=43125532+3000)
 
 
-
-crispr <- stackStringsFromBam("../20260330_ONT_Multiplex_DNA/output_2026/OVCAR8_CRISPR1_48/OVCAR8_A630_CRISPR1_IC80_multiplex_mapped_sc.bam", param = "chr17:43124697-43124736", use.names = T, )
+crispr <- stackStringsFromBam("../20260330_ONT_Multiplex_DNA/output/OVCAR8_CRISPR1_48/OVCAR8_A630_CRISPR1_IC80_multiplex_mapped_sc.bam", param = "chr17:43124697-43124736", use.names = T, )
 
 crispr_df <- data.frame(read_id= names(crispr), 
                       SNV =data.frame(crispr)[,1])
 
-
-
-mod_df <- data.frame("read_id" = c("81e9eebd-ab94-4d4c-8e5a-f3a614295b60", "899fa7ed-2665-41ff-9dec-d58d838adada","899fa7ed-2665-41ff-9dec-d58d838adada","899fa7ed-2665-41ff-9dec-d58d838adada","4d0dbd0d-5ad7-4819-9745-c88c5accf2fc","4d0dbd0d-5ad7-4819-9745-c88c5accf2fc","74b6cff7-f035-4139-b5ba-0540b1cd16e7", "ca26db19-f44c-4716-b9c3-540999ab02b0","a3a7a978-4336-42d8-84e1-0f0359bfd6fc"),
-                     "end" = c(43124726, 43124729,43124690, 43124683,43124728, 43124720,43124731, 43124753, 43124753),
-                     "start" = c(43124540, 43124710, 43124686, 43124328, 43124722, 43124717, 43124720,43124748,43124747),
-                     "SNV" = c(rep("DEL",7), "INDEL","INDEL")) %>%
+mod_df <- data.frame("read_id" = c("123d2dab-4e89-45b4-92f5-67532e437b92",    "123d2dab-4e89-45b4-92f5-67532e437b92","899fa7ed-2665-41ff-9dec-d58d838adada","899fa7ed-2665-41ff-9dec-d58d838adada","899fa7ed-2665-41ff-9dec-d58d838adada","4d0dbd0d-5ad7-4819-9745-c88c5accf2fc","4d0dbd0d-5ad7-4819-9745-c88c5accf2fc","74b6cff7-f035-4139-b5ba-0540b1cd16e7", "a3a7a978-4336-42d8-84e1-0f0359bfd6fc"),
+                     "end" = c(43124733, 43124743,  43124729,43124690, 43124683,43124728, 43124720,43124731, 43124753),
+                     "start" = c(43124726, 43124735, 43124710, 43124686, 43124328, 43124722, 43124717, 43124720,43124747),
+                     "SNV" = c(rep("DEL",8), "INDEL")) %>%
   mutate(SNV = factor(SNV, levels = c("REF", "DEL", "INDEL")))
 
-mod_df2 <- data.frame("read_id" = c("73167896-d0d4-4596-aa37-6b959bf8a196","ca26db19-f44c-4716-b9c3-540999ab02b0","a3a7a978-4336-42d8-84e1-0f0359bfd6fc"),
-                     "POS" = c(43124729, 43124726,43124726),
-                     "SNV" = rep("INDEL",3)) %>%
+mod_df2 <- data.frame("read_id" = c("a3a7a978-4336-42d8-84e1-0f0359bfd6fc"),
+                     "POS" = c(43124726),
+                     "SNV" = "INDEL") %>%
   mutate(SNV = factor(SNV, levels = c("REF", "DEL", "INDEL")))
+
 
 plot1 <- crispr_df %>%
 left_join(crispr_guide1 %>%
@@ -1793,8 +1787,7 @@ left_join(crispr_guide1 %>%
       axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         strip.background = element_blank(),
-        axis.ticks.y = element_blank())+
-  facet_wrap(~SNV, scales = "free_y", nrow = 3)
+        axis.ticks.y = element_blank())
 
 
 gg_gene_annotation<-  BRCA1_annotation %>%
@@ -4714,7 +4707,6 @@ ggarrange(elbow, ggarrange(pca1, pca2,  ncol = 2 ), nrow =2)
 ggsave("plots/supp_pdx_integration_pca.pdf", height =6.5, width = 6)
 
 ```
-
 
 # running of PMD
 
