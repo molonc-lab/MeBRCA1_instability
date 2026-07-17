@@ -899,7 +899,7 @@ dev.off()
 
 ```
 
-## Panel G
+## Panel F
 
 ```{r}
 GATAD2B_annotation<- transcript_annot %>%
@@ -982,7 +982,7 @@ ggsave("plots/supporting_reads_sv_334.pdf", width = 8, height = 3)
 
 ```
 
-## Panel H
+## Panel G
 
 ```{r}
 MYO1D_annotation<- transcript_annot %>%
